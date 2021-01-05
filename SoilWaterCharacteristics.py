@@ -8,17 +8,10 @@ def watersoil(Arcilla = 0, Arena = 0, MateriaOrganica = 0, Salinidad=0, Compacta
     DF = Compactacion       # Factor de Densidad ajustada entre 0.9 - 1.3
     Rw = Grava              # % Volumen
       
-    """ Q1500t = humedad a 1500 kPa (primera solucion) """
-    def humedad_1500KPa_1raSolucion():
-        return -0.024*S+0.487*C+0.006*MO+0.005*(S*MO)-0.013*(C*MO)+0.068*(S*C)+0.031
-    
-    Q1500t_1raSolucion = humedad_1500KPa_1raSolucion()
-    
-    
-    """ Q1500t = humedad a 1500 kPa """
+    """ Q1500  humedad a 1500 kPa """
     def humedad_1500KPa():
+        Q1500t_1raSolucion = -0.024*S+0.487*C+0.006*MO+0.005*(S*MO)-0.013*(C*MO)+0.068*(S*C)+0.031
         return Q1500t_1raSolucion + (0.14 * Q1500t_1raSolucion -0.02)
-    
     Q1500 = humedad_1500KPa() 
     
     
