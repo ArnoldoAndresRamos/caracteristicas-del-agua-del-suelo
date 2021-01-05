@@ -8,26 +8,23 @@ def watersoil(Arcilla = 0, Arena = 0, MateriaOrganica = 0, Salinidad=0, Compacta
     DF = Compactacion       # Factor de Densidad ajustada entre 0.9 - 1.3
     Rw = Grava              # % Volumen
       
+    
+    
     """ Q1500  humedad a 1500 kPa """
     def humedad_1500KPa():
-        Q1500t_1raSolucion = -0.024*S+0.487*C+0.006*MO+0.005*(S*MO)-0.013*(C*MO)+0.068*(S*C)+0.031
-        return Q1500t_1raSolucion + (0.14 * Q1500t_1raSolucion -0.02)
-    Q1500 = humedad_1500KPa() 
+        Q1500t = -0.024*S+0.487*C+0.006*MO+0.005*(S*MO)-0.013*(C*MO)+0.068*(S*C)+0.031
+        return Q1500t + (0.14 * Q1500t -0.02)
+    Q1500 = humedad_1500KPa()
+    print(Q1500)
     
     
-    """ Q33t = humedad a 33 kPa (primera solucion) """
-    def humedad_33KPa_1raSolucion():
-        return -0.251*S+0.195*C+0.011*MO+0.006*(S*MO)-0.027*(C*MO)+0.452*(S*C)+0.299
-    
-    Q33t = humedad_33KPa_1raSolucion() 
-    
-    
-    
-    """ Q33 = humedad a 33 kPa """
-    def humedad_33KPa(Q33t):
+    """ Q33t = humedad a 33 kPa  """
+    def humedad_33KPa():
+        Q33t = -0.251*S+0.195*C+0.011*MO+0.006*(S*MO)-0.027*(C*MO)+0.452*(S*C)+0.299
         return Q33t+(1.283*(Q33t*Q33t)-0.374*(Q33t)-0.015)
-    
-    Q33 = humedad_33KPa(Q33t)
+       
+    Q33 = humedad_33KPa()
+    print(Q33)
     
     
     
@@ -142,7 +139,7 @@ def watersoil(Arcilla = 0, Arena = 0, MateriaOrganica = 0, Salinidad=0, Compacta
 
 
 
-Arcilla = 0.6; Arena =0.02; MateriaOrganica=0  ; Salinidad=0; Compactacion=1.0 ; Grava=0.0
+Arcilla = 0.2; Arena =0.2; MateriaOrganica=2.5  ; Salinidad=0; Compactacion=1.0 ; Grava=0.0
 
 P1 = watersoil( Arcilla, Arena, MateriaOrganica, Salinidad, Compactacion, Grava )
 print(Arcilla, Arena, MateriaOrganica, Salinidad, Compactacion, Grava)
