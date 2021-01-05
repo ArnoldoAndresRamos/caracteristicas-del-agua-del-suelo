@@ -8,7 +8,7 @@ function swc($S,$C,$MO){
 		return $Q1500t;
 	};
 
-	echo swc(3,2,1);
+	echo "saddasd",swc(3,2,1);
 
 
 }
