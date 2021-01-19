@@ -5,9 +5,11 @@ function swc($S,$C,$MO){
 
 	function humedad_1500_KPa()
 	{
-        	$Q1500t = -0.024*$S+0.487*$C+0.006*$MO+0.005*($S*$MO)-0.013*($C*$MO)+0.068*($S*$C)+0.031;
-		return $Q1500+ (0.14 * $Q1500t -0.02);
+        	$Q1500t = (-0.024*$S) + (0.487*$C) + (0.006*$MO) + (0.005*($S*$MO)) - (0.013*($C*$MO)) + (0.068*($S*$C)) +0.031;
+        	echo $Q1500."<br>";
+    		return $Q1500 + (0.14 * $Q1500t -0.02);
 	};
+	
 	#echo humedad_1500_KPa();
 
 	function humedad_33_KPa(){
@@ -17,6 +19,7 @@ function swc($S,$C,$MO){
 	return "Q1500: ".humedad_1500_KPa()."<br>"." Q33: ".humedad_33_KPa();	
 };
 
-echo swc(0.2,0.2,2.5);
+echo swc(0.846272727272727, 0.0430151515151515, 1);
 
 ?>
+

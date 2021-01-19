@@ -8,11 +8,10 @@ def watersoil(Arcilla = 0, Arena = 0, MateriaOrganica = 0, Salinidad=0, Compacta
     DF = Compactacion       # Factor de Densidad ajustada entre 0.9 - 1.3
     Rw = Grava              # % Volumen
       
-    
-    
+        
     """ Q1500  humedad a 1500 kPa """
     def humedad_1500KPa():
-        Q1500t = -0.024*S+0.487*C+0.006*MO+0.005*(S*MO)-0.013*(C*MO)+0.068*(S*C)+0.031
+        Q1500t = -(0.024*S) + (0.487*C) + (0.006*MO) + (0.005*(S*MO)) - (0.013*(C*MO)) + (0.068*(S*C)) + 0.031
         return Q1500t + (0.14 * Q1500t -0.02)
     Q1500 = humedad_1500KPa()
     print(Q1500)
@@ -26,22 +25,77 @@ def watersoil(Arcilla = 0, Arena = 0, MateriaOrganica = 0, Salinidad=0, Compacta
     Q33 = humedad_33KPa()
     print(Q33)
     
-    
-    
-    """ Qs_33t= Humedad de saturación 0kPa - humedad a 33 kPa (primera solucion) """
-    def humedad_saturacion_de_0KPa_a_33KPa_1raSolucion():
-        return  0.278*S+0.034*C+0.022*MO-0.018*(S*MO)-0.027*(C*MO)-0.584*(S*C)+0.078
-    
-    Qs_33t = humedad_saturacion_de_0KPa_a_33KPa_1raSolucion()
-    
-    
         
-    """ Qs_33t= Humedad de saturación 0kPa - humedad a 33 kPa, densidad normal """
-    def humedad_saturacion_de_0KPa_a_33KPa_densidadNormal():
-        return Qs_33t+(0.636*Qs_33t-0.107)
+    """  Qs_33 = Humedad de saturación 0kPa - humedad a 33 kPa, densidad normal  """
+    def humedad_saturacion_de_0KPa_a_33KPa():
+        Qs_33t = 0.278*S+0.034*C+0.022*MO-0.018*(S*MO)-0.027*(C*MO)-0.584*(S*C)+0.078
+        return Qs_33t + (0.636*Qs_33t-0.107)
     
-    Qs_33  = humedad_saturacion_de_0KPa_a_33KPa_densidadNormal()
+    Qs_33 = humedad_saturacion_de_0KPa_a_33KPa()
+    print(Qs_33)
     
+    
+    """Humedad saturada (0 kPa), densidad normal,% v"""
+    def humedad_saturada_0KPa():
+        return Q33 + Qs_33 - 0.097 * S + 0.043
+            
+    Qs = humedad_saturada_0KPa()
+    print("Qs",Qs)
+        
+    
+    """  Densidad normal, g/cm3 """
+    Pn = (1-Qs)*2.65
+    print("Pn ",Pn)   
+    
+    
+    """  efecto de la densidad """
+    Pdf = Pn * DF 
+    print("Pdf ",Pdf)
+    
+    """  humedad de Saturacio   Saturated moisture (0 kPa), adjusted density, """
+    Qs_DF = 1-(Pdf/2.65)
+    print(Qs_DF)
+    
+    
+    
+    """  humedad a 33 kPa ajustada a la densidad normal  """
+    Q33_DF = Q33 - 0.2 * (Qs-Qs_DF)
+    print("Q33_DF",Q33_DF)
+    
+    
+    """  humedad a 33 kPa ajustada a la densidad """
+    QsDF_Q33DF = Qs_DF - Q33_DF
+    print(QsDF_Q33DF)
+    
+    
+    B = (math.log(Q33_DF)-math.log(Q1500))/(math.log(1500)-math.log(33))
+    print("B",B)
+    delta = 1/B 
+    
+    
+    Ks = 1930 * (math.pow((QsDF_Q33DF),3-B))
+    print(Ks) 
+    
+    
+    """ Gravel Red. Of  Sat Cond."""
+    u = (1-Rw)/(1-Rw*(1-1.5*(Pdf/2.65)))
+    print(u)
+    
+    
+    """ efecto de la graba en la Ks """
+    Ks = Ks*u
+    print("Ks DF",Ks)
+
+    
+    A = math.exp(math.log(33)+(delta * math.log(Q33_DF)))
+    print(A)
+    print(delta)
+    
+    
+    """Humedad saturada (0 kPa), densidad ajustada,% v"""
+    
+    Q1 = Q33_DF +QsDF_Q33DF - 0.097 * S + 0.043
+    print("Qs2",Q1)
     
     
     """ Tension en la entrada de aire primera solucion en KPa """
@@ -50,39 +104,9 @@ def watersoil(Arcilla = 0, Arena = 0, MateriaOrganica = 0, Salinidad=0, Compacta
         return  Yet+(0.02*(Yet*Yet)-0.113*Yet-0.70)
     
     Ye  = tension_entrada_de_aire()
-            
+    print(Ye)        
    
-    """Humedad saturada (0 kPa), densidad normal,% v"""
-    
-    Qs = Q33 + Qs_33 - 0.097 * S + 0.043
-    
-    """Densidad normal, g/cm3"""
-    Pn = (1-Qs)*2.65
-    
- 
-    
-    ## efecto de la densidad
-   
-    Pdf = Pn * DF
-    """  humedad de Saturacio primera solucion  """
-    Qs_DF = 1-(Pdf/2.65)
-
-
-    """  humedad a 33 kPa ajustada a la densidad normal  """
-    Q33_DF = Q33 - 0.2 * (Qs-Qs_DF)
-    
-    """  humedad a 33 kPa ajustada a la densidad """
-    QsDF_Q33DF = Qs_DF - Q33_DF
-    
-    
-    
-    
-    """Humedad saturada (0 kPa), densidad ajustada,% v"""
-    
-    Q1 = Q33_DF +QsDF_Q33DF - 0.097 * S + 0.043
-
-    
-    
+        
     ### tension de humeda
     B = (math.log(1500)-math.log(33))/(math.log(Q33_DF)-math.log(Q1500))
     print(B)
@@ -115,14 +139,16 @@ def watersoil(Arcilla = 0, Arena = 0, MateriaOrganica = 0, Salinidad=0, Compacta
     p = 1                               # matriz de desidad del suelo 
     a = 2.65/2.65                       # matriz de desidad del suelo / densidad de la grava(2.65) = p/2.65
     
-    Rv = ( a * Rw ) / ( 1-Rw * (1-a) )  # Volumen de la fraccon de grava 
+    Rv = ( a * Rw ) / ( 1-Rw * (1-a) ) # Volumen de la fraccon de grava 
+    print("Rv",Rv)
     PB = Pn * ( 1-Rv ) + ( Rv*2.65 )    # densidad aparente del suelo
     PB2= Pdf*( 1-Rv ) + ( Rv*2.65 )
+    print("PB",PB)
     PAW = Q33_DF - Q1500                # Humedad disponible para la planta
     PAWB = PAW * (1-Rv)                 # humedad disponible para la planta(
     Kb_Ks = (1-Rw)/(1-Rw*(1-3*a/2))     # 
     
-
+    
 
     Punto_Marchitez_Permanente = round(Q1500*100,1) # % Volumen
     Capacidad_Campo = round(Q33_DF*100,1)           # % Volumen
@@ -139,7 +165,7 @@ def watersoil(Arcilla = 0, Arena = 0, MateriaOrganica = 0, Salinidad=0, Compacta
 
 
 
-Arcilla = 0.2; Arena =0.2; MateriaOrganica=2.5  ; Salinidad=0; Compactacion=1.0 ; Grava=0.0
+Arcilla = 0.0430151515151515; Arena =0.846272727272727; MateriaOrganica=2.08  ; Salinidad=0; Compactacion=1.0; Grava=0.1
 
 P1 = watersoil( Arcilla, Arena, MateriaOrganica, Salinidad, Compactacion, Grava )
 print(Arcilla, Arena, MateriaOrganica, Salinidad, Compactacion, Grava)
